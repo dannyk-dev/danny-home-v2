@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/constants/mock-api';
+import { fileRequestSchema } from '@/lib/schemas/storage';
 import { UploadDropzone } from '@/lib/uploadthing';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
@@ -37,17 +38,7 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const formSchema = z.object({
-  image: z
-    .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
+  images: z.array(fileRequestSchema),
   name: z.string().min(2, {
     message: 'Product name must be at least 2 characters.'
   }),
@@ -66,10 +57,11 @@ export default function ProductForm({
   pageTitle: string;
 }) {
   const defaultValues = {
-    name: initialData?.name || '',
-    category: initialData?.category || '',
-    price: initialData?.price || 0,
-    description: initialData?.description || ''
+    images: [],
+    name: initialData?.name ?? '',
+    category: initialData?.category ?? '',
+    price: initialData?.price ?? 0,
+    description: initialData?.description ?? ''
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,8 +72,6 @@ export default function ProductForm({
   form.watch((val) => {
       console.log(val)
     })
-
-
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Form submission logic would be implemented here
@@ -99,7 +89,7 @@ export default function ProductForm({
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
               control={form.control}
-              name='image'
+              name='images'
               render={({ field }) => (
                 <div className='space-y-6'>
                   <FormItem className='w-full'>
@@ -107,8 +97,9 @@ export default function ProductForm({
                     <FormControl>
 
                       <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
+                        convertToBase64
+                        valueBase64={field.value}
+                        onValueBase64Change={field.onChange}
                         maxFiles={5}
                         maxSize={4 * 1024 * 1024}
                         // disabled={loading}

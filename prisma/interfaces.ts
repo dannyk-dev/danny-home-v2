@@ -18,6 +18,22 @@ export type CartStatus = "ACTIVE" | "ABANDONED" | "CONVERTED";
 
 export type StockReason = "MANUAL" | "SALE" | "RESTOCK" | "RETURN" | "ADJUSTMENT";
 
+export interface Attachment {
+  id: string;
+  key: string;
+  url: string;
+  mimeType: string;
+  size: number;
+  uploaderId: string | null;
+  uploader?: User | null;
+  products?: Product[];
+  banners?: Banner[];
+  categories?: Category[];
+  createdAt: Date;
+  User?: User[];
+  SubCategory?: SubCategory[];
+}
+
 export interface Account {
   id: string;
   userId: string;
@@ -54,9 +70,11 @@ export interface User {
   name: string | null;
   email: string | null;
   emailVerified: Date | null;
-  image: string | null;
   phone: string | null;
   role: Role;
+  avatarId: string | null;
+  avatar?: Attachment | null;
+  attachments?: Attachment[];
   accounts?: Account[];
   sessions?: Session[];
   orders?: Order[];
@@ -80,8 +98,26 @@ export interface Category {
   parentId: string | null;
   parent?: Category | null;
   children?: Category[];
-  products?: Product[];
   promotions?: Promotion[];
+  subcategories?: SubCategory[];
+  createdAt: Date;
+  updatedAt: Date;
+  attachmentId: string | null;
+  attachments?: Attachment | null;
+}
+
+export interface SubCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  categoryId: string;
+  category?: Category;
+  products?: Product[];
+  attachmentId: string | null;
+  attachments?: Attachment | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,14 +129,14 @@ export interface Product {
   description: string | null;
   richDesc: JsonValue | null;
   brand: string | null;
-  images: string[];
   metaTitle: string | null;
   metaDescription: string | null;
   ratingAvg: number;
   ratingCount: number;
   taxable: boolean;
-  categoryId: string;
-  category?: Category;
+  attachments?: Attachment[];
+  subCategoryId: string;
+  subCategory?: SubCategory;
   variants?: ProductVariant[];
   promotions?: Promotion[];
   reviews?: ProductReview[];
@@ -158,13 +194,14 @@ export interface Promotion {
 export interface Banner {
   id: string;
   title: string | null;
-  imageUrl: string;
-  linkUrl: string | null;
   position: BannerPos;
   order: number;
+  linkUrl: string | null;
   startsAt: Date | null;
   endsAt: Date | null;
   active: boolean;
+  attachmentId: string | null;
+  attachment?: Attachment | null;
   createdAt: Date;
   updatedAt: Date;
 }

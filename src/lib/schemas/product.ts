@@ -2,11 +2,19 @@ import { z } from "zod";
 import { CurrencyEnum } from "./enums";
 import { slugRegex } from "./category";
 
-export const imageArraySchema = z
-  .array(z.string().url().describe("image‑url"))
-  .min(1, "At least one image is required");
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                           */
+/* ------------------------------------------------------------------ */
+export const base64FileInput = z.object({
+  name: z.string(),
+  type: z.string(),
+  data: z.string(),       // Base64 from FileReader
+});
+export type Base64FileInput = z.infer<typeof base64FileInput>;
 
-
+/* ------------------------------------------------------------------ */
+/*  Variant                                                            */
+/* ------------------------------------------------------------------ */
 export const productVariantInput = z.object({
   sku: z.string().min(1, "SKU is required"),
   barcode: z.string().optional(),
@@ -14,64 +22,67 @@ export const productVariantInput = z.object({
 
   price: z.preprocess(
     (v) => (typeof v === "string" ? parseFloat(v) : v),
-    z.number().positive("Price must be > 0")
+    z.number().positive()
   ),
   currency: CurrencyEnum.default("BRL"),
 
-  stock: z
-    .preprocess((v) => (typeof v === "string" ? parseInt(v) : v), z.number().int().nonnegative())
-    .default(0),
+  stock: z.preprocess(
+    (v) => (typeof v === "string" ? parseInt(v) : v),
+    z.number().int().nonnegative()
+  ).default(0),
 
   attributes: z.record(z.string()).optional(),
 
-
   weightGrams: z.number().int().positive().optional(),
-  widthMm: z.number().int().positive().optional(),
-  heightMm: z.number().int().positive().optional(),
-  lengthMm: z.number().int().positive().optional(),
-
-  active: z.boolean().default(true),
-
+  widthMm:     z.number().int().positive().optional(),
+  heightMm:    z.number().int().positive().optional(),
+  lengthMm:    z.number().int().positive().optional(),
+  active:      z.boolean().default(true),
 }).strict();
 
+/* ------------------------------------------------------------------ */
+/*  CREATE / UPDATE PRODUCT                                            */
+/* ------------------------------------------------------------------ */
+export const createProductSchema = z.object({
+  name:  z.string().min(2),
+  slug:  z.string().regex(slugRegex),
+  description:     z.string().optional(),
+  richDesc:        z.any().optional(),
+  brand:           z.string().optional(),
+  metaTitle:       z.string().max(60).optional(),
+  metaDescription: z.string().max(160).optional(),
+  taxable:         z.boolean().default(true),
 
-export const createProductSchema = z
-  .object({
-    name: z.string().min(2, "Name is too short"),
-    slug: z.string().regex(slugRegex, "Invalid slug"),
-    description: z.string().optional(),
-    richDesc: z.any().optional(),
-    brand: z.string().optional(),
+  /* NEW: product belongs to a sub-category */
+  subCategoryId: z.string().uuid({ message: "Invalid sub-category id" }),
 
-    images: imageArraySchema,
+  /* Pricing */
+  defaultPrice: z.preprocess(
+    (v) => (typeof v === "string" ? parseFloat(v) : v),
+    z.number().positive()
+  ),
+  currency: CurrencyEnum.default("BRL"),
+  active:   z.boolean().default(true),
 
-    metaTitle: z.string().max(60).optional(),
-    metaDescription: z.string().max(160).optional(),
+  /* Attachments (image uploads) */
+  attachments: z.array(base64FileInput).optional(),
 
-    taxable: z.boolean().default(true),
+  /* Variants */
+  variants: z.array(productVariantInput).optional(),
+}).strict();
 
-    categoryId: z.string().uuid({ message: "Invalid category id" }),
-
-    defaultPrice: z.preprocess(
-      (v) => (typeof v === "string" ? parseFloat(v) : v),
-      z.number().positive("Price must be > 0")
-    ),
-    currency: CurrencyEnum.default("BRL"),
-
-    active: z.boolean().default(true),
-
-
-    variants: z.array(productVariantInput.omit({ /* productId */ })).optional(),
-  })
-  .strict();
-
-export const updateProductSchema = createProductSchema.partial();
-
-export const productIdSchema = z.object({
-  id: z.string().uuid(),
+export const updateProductSchema = createProductSchema.partial().extend({
+  /* for PATCH we allow these convenience props */
+  newAttachments: z.array(base64FileInput).optional(),
+  removeKeys:     z.array(z.string()).optional(),
 });
 
+export const productIdSchema = z.object({ id: z.string().uuid() });
 
-export type TCreateProductSchema = z.infer<typeof createProductSchema>;
-export type TUpdateProductSchema = z.infer<typeof updateProductSchema>;
-export type TProductVariantSchema = z.infer<typeof productVariantInput>;
+/* ------------------------------------------------------------------ */
+/*  Types                                                             */
+/* ------------------------------------------------------------------ */
+export type TCreateProductSchema   = z.infer<typeof createProductSchema>;
+export type TUpdateProductSchema   = z.infer<typeof updateProductSchema>;
+export type TProductVariantSchema  = z.infer<typeof productVariantInput>;
+export type TBase64FileInput       = Base64FileInput;
