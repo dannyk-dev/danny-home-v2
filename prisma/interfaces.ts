@@ -83,6 +83,7 @@ export interface User {
   wishlists?: Wishlist[];
   reviews?: ProductReview[];
   eventLogs?: EventLog[];
+  image: string | null;
   createdAt: Date;
   updatedAt: Date;
   InventoryStock?: InventoryStock[];

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CurrencyEnum } from "./enums";
-import { slugRegex } from "./category";
+const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */

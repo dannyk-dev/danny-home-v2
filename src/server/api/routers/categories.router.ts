@@ -19,6 +19,13 @@ export const categoryRouter = createTRPCRouter({
     ),
 
   tree: adminProcedure.query(() => CategoryService.listWithChildren()),
+  listOptions: adminProcedure.query(({ctx}) => {
+    return ctx.db.category.findMany({
+      include: {
+        _count: true
+      }
+    })
+  }),
 
   byId: adminProcedure
     .input(categoryIdSchema)

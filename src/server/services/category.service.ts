@@ -6,7 +6,7 @@ import { db } from "@/server/db";
 import {
   storageService,
   type Base64FileInput,
-} from "@/server/services/storage";
+} from "@/server/services/storage.service";
 import type {
   TCreateCategorySchema,
   TCreateSubCategorySchema,
