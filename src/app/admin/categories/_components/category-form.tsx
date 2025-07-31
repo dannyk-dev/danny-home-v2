@@ -33,7 +33,7 @@ function CategoryForm() {
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>
-                <FileUploader convertToBase64 valueBase64={field.value} onValueBase64Change={field.onChange} />
+                <FileUploader maxSize={1024 * 1024 * 5} maxFiles={1} convertToBase64 valueBase64={field.value} onValueBase64Change={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
