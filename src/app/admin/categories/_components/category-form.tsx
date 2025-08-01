@@ -17,11 +17,17 @@ import {
 } from "@/lib/schemas/category";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import type { Category } from "prisma/interfaces";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import slugify from "slugify";
 import { toast } from "sonner";
 
-function CategoryForm() {
+type Props = {
+  onCreate?: (data: Category) => void;
+}
+
+function CategoryForm({ onCreate }: Props) {
   const apiUtils = api.useUtils();
   const form = useForm<TCreateCategorySchema>({
     resolver: zodResolver(createCategorySchema),
@@ -35,13 +41,23 @@ function CategoryForm() {
 
   const createCategory = api.categories.create.useMutation();
 
+  const updatedName = form.watch("name");
+
+  useEffect(() => {
+    form.setValue("slug", slugify(updatedName));
+  }, [form, updatedName]);
+
   function onSubmit(values: TCreateCategorySchema) {
     createCategory.mutate(values, {
-      async onSuccess() {
+      async onSuccess(data) {
         await apiUtils.categories.listOptions.invalidate();
         await apiUtils.categories.list.invalidate();
 
         toast.success("Category created");
+        if (onCreate) {
+          onCreate(data);
+        }
+
       },
       onError(error) {
         toast.error(error.message);
@@ -52,7 +68,7 @@ function CategoryForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <form className="space-y-3">
         <FormField
           control={form.control}
           name="image"
@@ -111,7 +127,13 @@ function CategoryForm() {
             </FormItem>
           )}
         />
-        <Button variant="secondary" className="mt-4 w-full" type="submit">
+        <Button
+          isLoading={createCategory.isPending}
+          variant="secondary"
+          className="mt-4 w-full"
+          type="button"
+          onClick={form.handleSubmit(onSubmit)}
+        >
           Save
         </Button>
       </form>

@@ -23,7 +23,7 @@ function CreateCategoryPopup({ trigger }: Props) {
       showSuccess={false}
       showCloseButton
       popupClass="-bottom-20"
-      openChild={<CategoryForm />}
+      openChild={<CategoryForm onCreate={() => setOpen(false)} />}
     />
   );
 }

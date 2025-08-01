@@ -98,13 +98,13 @@ const CategoryComboxBoxWithAdd = ({ value, onValueChange }: Props) => {
                         }}
                       >
                         {category.name}
-                        <Tooltip>
+                        <Tooltip  >
                           <TooltipTrigger asChild>
                             <Badge variant="outline">
                               {category._count.subcategories}
                             </Badge>
                           </TooltipTrigger>
-                          <TooltipContent>Sub-categories</TooltipContent>
+                          <TooltipContent className="">Sub-categories</TooltipContent>
                         </Tooltip>
                         {value === category.id && (
                           <CheckIcon size={16} className="ml-auto" />

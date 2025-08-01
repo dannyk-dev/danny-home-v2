@@ -14,7 +14,8 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useControllableState } from "@/hooks/use-controllable-state";
 import { cn, formatBytes, readFilesAsBase64 } from "@/lib/utils";
-import type { TFileRequestSchema } from "@/lib/schemas/storage";
+import type { Base64FileInput, TFileRequestSchema } from "@/lib/schemas/storage";
+import { base64FileInput } from '../lib/schemas/product';
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -39,7 +40,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example value={files}
    */
-  valueBase64?: TFileRequestSchema[];
+  valueBase64?: Base64FileInput[];
 
   /**
    * Function to be called when the value changes.
@@ -47,7 +48,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example onValueChange={(files) => setFiles(files)}
    */
-  onValueBase64Change?: React.Dispatch<React.SetStateAction<TFileRequestSchema[]>>;
+  onValueBase64Change?: React.Dispatch<React.SetStateAction<Base64FileInput[]>>;
 
   /**
    * Function to be called when files are uploaded.

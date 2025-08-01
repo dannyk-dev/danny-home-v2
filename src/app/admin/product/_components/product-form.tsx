@@ -59,6 +59,7 @@ export default function ProductForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: defaultValues,
+
   });
 
   form.watch((val) => {

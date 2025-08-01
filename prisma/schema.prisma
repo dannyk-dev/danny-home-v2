@@ -96,25 +96,33 @@ enum StockReason {
  * products, banners or the uploading user.
  */
 model Attachment {
-  id          String  @id @default(cuid())
-  key         String  @unique              // S3 object key
-  url         String                      // Public URL (signed or CloudFront)
-  mimeType    String
-  size        Int                         // Size in bytes
+  id        String   @id @default(cuid())
 
-  uploaderId  String?
-  uploader    User?   @relation("UserUploads", fields: [uploaderId], references: [id], onDelete: SetNull)
+  /* -------- core metadata -------- */
+  filename  String               // original file name
+  mimeType  String               // e.g. image/png
+  size      Int                  // bytes
 
-  products Product[] @relation("ProductAttachments")
-  banners  Banner[]  @relation("BannerImage")
-  categories Category[] @relation("CategoryImage")
+  /* -------- actual data -------- */
+  data      Bytes                // binary column (Postgres BYTEA) – you can still store/read as Base-64 in code
 
+  /* -------- optional uploader -------- */
+  uploaderId String?
+  uploader   User?   @relation("UserUploads", fields: [uploaderId], references: [id], onDelete: SetNull)
+
+  /* -------- consumers -------- */
+  products      Product[]      @relation("ProductAttachments")
+  banners       Banner[]       @relation("BannerImage")
+  categories    Category[]     @relation("CategoryImage")
+  subCategories SubCategory[]  @relation("SubCategoryImage")  // new camel-case relation name
+
+  /* -------- misc -------- */
   createdAt DateTime @default(now())
 
+  /* user avatar back-link */
   User User[] @relation("UserAvatar")
-
-  SubCategory SubCategory[] @relation("SubCategoryImage")
 }
+
 
 /**
  * ──────────── Auth / Next‑Auth models ─────

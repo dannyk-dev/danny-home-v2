@@ -20,18 +20,18 @@ export type StockReason = "MANUAL" | "SALE" | "RESTOCK" | "RETURN" | "ADJUSTMENT
 
 export interface Attachment {
   id: string;
-  key: string;
-  url: string;
+  filename: string;
   mimeType: string;
   size: number;
+  data: Uint8Array;
   uploaderId: string | null;
   uploader?: User | null;
   products?: Product[];
   banners?: Banner[];
   categories?: Category[];
+  subCategories?: SubCategory[];
   createdAt: Date;
   User?: User[];
-  SubCategory?: SubCategory[];
 }
 
 export interface Account {

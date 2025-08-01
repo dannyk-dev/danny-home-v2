@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { base64FileInput } from './schemas/product';
+import type { Base64FileInput } from "@/lib/schemas/storage";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -35,11 +37,7 @@ export function formatBytes(
 export async function readFilesAsBase64(
   files: File[],
 ): Promise<
-  {
-    name: string;
-    type: string;
-    data: string; // Base-64 (no data:prefix)
-  }[]
+  Base64FileInput[]
 > {
   /** read a single file */
   const readOne = (file: File) =>
@@ -59,4 +57,38 @@ export async function readFilesAsBase64(
     });
 
   return Promise.all(files.map(readOne));
+}
+
+type StoredFile = {
+  name: string;
+  type: string;   // mime-type (image/png, image/jpeg, ...)
+  data: string;   // base-64 *without* `"data:..."` prefix
+};
+
+export function buildViewableUrl(
+  file: StoredFile,
+  opts: { useBlob?: boolean } = {},
+): string {
+  // 1) convert base64 → binary string → Uint8Array
+  const binary = atob(file.data);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+
+  if (opts.useBlob) {
+    // Blob + ObjectURL
+    const blob = new Blob([bytes], { type: file.type });
+    return URL.createObjectURL(blob); // remember to revoke when done!
+  }
+
+  // default: data-URL
+  return `data:${file.type};base64,${file.data}`;
+}
+
+/* ----------------------------------------------------------
+   Helper to clean up any blob-URLs when a component unmounts
+   (call this inside a React useEffect cleanup, for example)
+---------------------------------------------------------- */
+export function revokeIfBlob(url: string) {
+  if (url.startsWith("blob:")) URL.revokeObjectURL(url);
 }

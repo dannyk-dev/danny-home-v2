@@ -12,6 +12,8 @@ export interface UploadedFileMeta {
   url: string;
   mimeType: string;
   size: number;
+  id: string;
+  name: string;
 }
 
 export const fileRequestSchema = z.object({
