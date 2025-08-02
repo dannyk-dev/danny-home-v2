@@ -51,7 +51,8 @@ export function PopoverForm({
         layoutId={`${title}-wrapper`}
         onClick={() => setOpen(true)}
       >
-        <motion.span layoutId={`${title}-title`}>{trigger}</motion.span>
+        {trigger}
+        {/* <motionpan layoutId={`${title}-title`}></motion.span> */}
       </motion.div>
       <AnimatePresence>
         {open && (
