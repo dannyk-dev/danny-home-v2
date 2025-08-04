@@ -1,30 +1,31 @@
-import React from 'react';
-import { ModeToggle } from './ThemeToggle/theme-toggle';
-import { UserNav } from './user-nav';
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Separator } from '@/components/ui/separator';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import SearchInput from '@/components/search-input';
+import { Button } from '@/components/ui/button'
+import { HydrateClient } from '@/trpc/server'
+import { IconSearch, IconUser } from '@tabler/icons-react'
+import Image from 'next/image'
+import React from 'react'
 
-export default function Header() {
+type Props = {}
+
+const Header = (props: Props) => {
   return (
-    <header className='flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12'>
-      <div className='flex items-center gap-2 px-4'>
-        <SidebarTrigger className='-ml-1' />
-        <Separator orientation='vertical' className='mr-2 h-4' />
-        <Breadcrumbs />
-      </div>
-
-      <div className='flex items-center gap-4 px-4'>
-        {/* <CtaGithub /> */}
-        <div className='hidden md:flex'>
-          <SearchInput />
+    <HydrateClient>
+      <header className='flex items-center'>
+      <div className="grid grid-cols-3 w-5/6 mx-auto border-b border-neutral-300">
+        <div className="col-span-2 flex items-center justify-end">
+          <Image src='/logo-main.png' width={200} height={200} alt='Danny Home Logo' className="object-cover" />
         </div>
-        <ModeToggle />
-        <UserNav />
-
-        {/* <ThemeSelector /> */}
+        <div className="col-span-1 flex items-center">
+          <Button variant='ghost' size='icon'>
+            <IconSearch />
+          </Button>
+          <Button variant='ghost' size='icon'>
+            <IconUser />
+          </Button>
+        </div>
       </div>
     </header>
-  );
+    </HydrateClient>
+  )
 }
+
+export default Header

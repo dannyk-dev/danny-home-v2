@@ -1,4 +1,4 @@
-import PageContainer from '@/app/_components/page-container';
+import PageContainer from '@/app/admin/_components/page-container';
 import ProductViewPage from '@/app/admin/product/_components/product-view-page';
 import FormCardSkeleton from '@/components/form-card-skeleton';
 // import PageContainer from '@/components/layout/page-container';

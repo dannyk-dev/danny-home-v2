@@ -17,6 +17,7 @@ import { auth } from "@/server/auth";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { AppFileRouter } from "@/app/api/uploadthing/core";
+import Header from "@/app/_components/header";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -24,8 +25,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: "Next Shadcn",
-  description: "Basic dashboard with Next.js and Shadcn",
+  title: "Danny Home",
+  description: "Danny Home",
 };
 
 export const viewport: Viewport = {
@@ -79,6 +80,7 @@ export default async function RootLayout({
               >
                 <Providers activeThemeValue={activeThemeValue!}>
                   <Toaster />
+                  <Header />
                   {children}
                 </Providers>
               </ThemeProvider>

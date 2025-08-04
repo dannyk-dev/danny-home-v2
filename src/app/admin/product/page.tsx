@@ -1,4 +1,4 @@
-import PageContainer from '@/app/_components/page-container';
+import PageContainer from '@/app/admin/_components/page-container';
 import ProductListingPage from '@/app/admin/product/_components/product-listing';
 import { buttonVariants } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';

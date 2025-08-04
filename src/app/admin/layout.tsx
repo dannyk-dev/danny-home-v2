@@ -1,5 +1,5 @@
-import AppSidebar from '@/app/_components/app-sidebar';
-import Header from '@/app/_components/header';
+// import AppSidebar fro@/app/admin/_components/app-sidebarbar';
+// import Header from '@/app/_components/header';
 import KBar from '@/components/kbar';
 // import AppSidebar from '@/components/layout/app-sidebar';
 // import Header from '@/components/layout/header';
@@ -10,6 +10,8 @@ import { auth } from '@/server/auth';
 import { Role } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import type { User } from 'prisma/interfaces';
+import AppSidebar from '@/app/admin/_components/app-sidebar';
+import Header from '@/app/admin/_components/header';
 
 export const metadata: Metadata = {
   title: 'Danny Home - Admin',
@@ -33,9 +35,6 @@ export default async function AdminLayout({
   } else {
     return redirect('/api/auth/signin');
   }
-
-
-
 
   return (
     <KBar>

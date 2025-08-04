@@ -1,5 +1,5 @@
 // import PageContainer from '@/components/layout/page-container';
-import PageContainer from '@/app/_components/page-container';
+import PageContainer from '@/app/admin/_components/page-container';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
